@@ -151,7 +151,7 @@ In some cases `input` will change, but `source` will not change in response. It 
     unchanged-run source -- output
 
 * **fabricate: success**, but fails on Travis
-* Make: failure, does not seem to work
+* **Make: success**
 * **Ninja: success**, requires `restat` to be added
 * **SCons: success**
 * **Shake: success**
@@ -169,7 +169,7 @@ In some cases one output will change, but not the other.
 I believe this test can be written on top of `unchanged`, by encoding the dependencies appropriately.
 
 * **fabricate: success**, but fails on Travis
-* Make: failure, does not seem to work
+* **Make: success**
 * **Ninja: success**, requires `restat` to be added
 * **SCons: success**
 * **Shake: success**
@@ -186,7 +186,7 @@ Introduce a dependency on a piece of system information that must be recomputed 
 I believe that given a small amount of shell scripting glue (to run `system1-gen`) this test can be written on top of `unchanged`.
 
 * fabricate: unsure
-* Make: unsure
+* **Make: success**
 * Ninja: unsure
 * **SCons: success**
 * **Shake: success**
@@ -201,7 +201,7 @@ Rerun if and only if `output` does not exist or system environment variable
     system2-run -- output
 
 * fabricate: unsure
-* Make: unsure
+* **Make: success**, requires explicit inclusion of configuration file recording the previous value of SYSTEM2_DATA
 * Ninja: unsure
 * SCons: unsure
 * **Shake: success**
@@ -217,7 +217,7 @@ Run with a parallelism of 8, but limit a specific stage to no more than 2 concur
     pool-run input3 -- output3
 
 * fabricate: unsure
-* Make: failure, doesn't seem to work
+* Make: failure, may be possible with recursive make and hacking around in semi-internal variables such as MAKEOPTS, but no robust method.
 * **Ninja: success**
 * SCons: failure, doesn't support pools
 * **Shake: success**
@@ -245,7 +245,7 @@ Rerun if and only if `input` file was changed.
     nofileout-run input --
 
 * fabricate: unsure
-* Make: unsure
+* Make: failure, cannot determine whether input was changed, unless user explicitly creates a file to provide a time stamp to check against.
 * Ninja: unsure
 * SCons: unsure
 * Shake: failure, doesn't support rules that are only run if the dependencies change but don't produce an output file
@@ -301,4 +301,6 @@ A cached command is where the inputs/outputs for a command are tracked, and the 
 
 ### Regenerate [Make]
 
-Make lets you regenerate the Makefile and then continue again. How that works is anyones guess.
+Make lets you regenerate the Makefile and then continue again. If done correctly (e.g. by only changing included files with specific types of contents), this effectively gives Make the ability to add dependencies on the fly using the outputs of commands, and thus roughly puts it in the monadic category of build system. Similar functionality is possible using "recursive" make, i.e. with "$(MAKE)".
+
+The current dominance of GNU Make is important; in previous eras, many implementations of "include" and $(MAKE) were not always as expressive (or available at all), and could cause portability issues.
