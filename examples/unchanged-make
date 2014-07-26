@@ -1,0 +1,5 @@
+output: source
+	unchanged-run source -- output
+
+source: input
+	unchanged-gen input -- source

@@ -1,0 +1,8 @@
+source1 source2: input
+	multiple-gen input -- source1 source2
+
+output1: source1
+	multiple-run source1 -- output1
+
+output2: source2
+	multiple-run source2 -- output2

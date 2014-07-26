@@ -1,0 +1,9 @@
+output: source
+	system1-run source -- output
+
+source: RUN_ALWAYS ;
+
+.PHONY: RUN_ALWAYS
+
+RUN_ALWAYS:
+	system1-gen -- source

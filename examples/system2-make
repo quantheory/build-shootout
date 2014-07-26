@@ -1,0 +1,20 @@
+output: config.d
+	system2-run -- output
+
+config.d: RUN_ALWAYS ;
+
+.PHONY: RUN_ALWAYS
+
+null :=
+
+-include config.d
+
+# If config.d is not present, ensure that these two don't match.
+old_SYSTEM2_DATA ?= $(SYSTEM2_DATA)x
+
+ifeq ($(old_SYSTEM2_DATA),$(SYSTEM2_DATA))
+RUN_ALWAYS: ;
+else
+RUN_ALWAYS:
+	echo 'old_SYSTEM2_DATA:=$(null)'$(SYSTEM2_DATA)'$(null)' > config.d
+endif
